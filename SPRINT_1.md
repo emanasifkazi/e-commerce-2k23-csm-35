@@ -395,7 +395,7 @@ The defined architecture provides a clear foundation for future sprints, where t
 The Sprint 1 document will be stored in the project repository using the following structure:
 
 ```text
-ecommerce-[yourRollNo]/
+ecommerce-35/
 │
 ├── docs/
 │   └── SPRINT_1.md
