@@ -14,23 +14,25 @@
 
 ## 1.1 Primary Persona
 
-**Persona Name:** Online Fashion Shopper
+**Persona Name:** General Online Fashion Shopper
 
-**Age Group:** 18–35 years
+**Age Group:** All age groups
 
 **Target Users:**
 
-* Students
+* Children and teenagers
 * Young adults
-* Working professionals
+* Adults
+* Older customers
 * General online shoppers
-* People purchasing fashion products or gifts
+* Customers buying fashion products for themselves or as gifts
 
 **Goals:**
 
 * Find fashion products easily
 * Browse products by category
-* Search and filter products
+* Search for specific products
+* Filter products according to their needs
 * Add products to a shopping cart
 * Place orders online
 * View previous orders
@@ -39,15 +41,17 @@
 
 ## 1.2 Core Pain Point
 
-Customers often need to visit multiple websites or physical stores to find suitable fashion and accessory products. This can make product searching and purchasing inconvenient and time-consuming.
+Customers may need to visit different physical stores or websites to find clothing, shoes, bags, watches, jewelry, and other fashion accessories. Searching across multiple platforms can be inconvenient and time-consuming.
 
-StyleCart addresses this problem by providing a single online platform where customers can browse fashion products, manage their cart, and place orders.
+StyleCart provides a single online platform where customers can browse different fashion and accessory products, manage their shopping cart, place orders, and view their order history.
 
-## 1.3 Domain Scope
+## 1.3 Market Focus
 
-StyleCart focuses on online fashion and accessories.
+StyleCart focuses on customers who prefer convenient online shopping for fashion and accessories. The platform is designed as a general fashion store rather than targeting only one specific age group or fashion category.
 
-### Product Categories
+## 1.4 Domain Scope
+
+StyleCart covers the following product categories:
 
 * Clothing
 * Shoes
@@ -58,28 +62,29 @@ StyleCart focuses on online fashion and accessories.
 
 ### Features Outside the Initial Scope
 
-The following advanced features are not included in the Sprint 1 MVP:
+The following advanced features are outside the initial MVP:
 
 * AI-based product recommendations
 * Live delivery tracking
 * Loyalty and reward programs
 * Multi-vendor marketplace
 * Advanced business analytics
+* Real payment gateway integration
 
 ---
 
 # 2. MVP Feature Scope
 
-The Minimum Viable Product (MVP) contains the following primary workflows:
+The Minimum Viable Product (MVP) focuses on the main activities required for a basic online fashion store.
 
-| Category       | Feature Name                   | Description                                                                  | Priority   |
-| -------------- | ------------------------------ | ---------------------------------------------------------------------------- | ---------- |
-| Authentication | User Registration & Login      | Customers can create accounts and securely log in using email and password.  | High (MVP) |
-| Catalog        | Product List & Search          | Users can browse, search, and filter fashion products by category.           | High (MVP) |
-| Cart           | Cart Management                | Users can add products to the cart, update quantities, and remove products.  | High (MVP) |
-| Checkout       | Order Processing               | Users can review their cart and place an order using a mock payment process. | High (MVP) |
-| Admin          | Product & Inventory Management | Admin can add, update, delete products and manage stock quantities.          | Medium     |
-| Orders         | Order History                  | Customers can view their previous orders and order status.                   | Medium     |
+| Category       | Feature Name                   | Description                                                                                   | Priority   |
+| -------------- | ------------------------------ | --------------------------------------------------------------------------------------------- | ---------- |
+| Authentication | User Registration & Login      | Customers can create an account and securely log in using their email and password.           | High (MVP) |
+| Catalog        | Product Browsing & Search      | Customers can browse products and search for products by name or category.                    | High (MVP) |
+| Cart           | Shopping Cart Management       | Customers can add products, update quantities, and remove products from the cart.             | High (MVP) |
+| Checkout       | Order Placement                | Customers can review their cart details and place an order through a simple checkout process. | High (MVP) |
+| Admin          | Product & Inventory Management | Admin can add, update, delete products and manage available stock.                            | Medium     |
+| Orders         | Order History                  | Customers can view their previous orders and their basic order status.                        | Medium     |
 
 ## 2.1 Customer Workflow
 
@@ -110,7 +115,7 @@ Manage Categories
      ↓
 Manage Products
      ↓
-Update Inventory
+Manage Inventory
      ↓
 View Orders
 ```
@@ -121,29 +126,29 @@ View Orders
 
 ## 3.1 Frontend — React.js
 
-React.js will be used to develop the user interface of StyleCart. It supports reusable components and dynamic page updates, making it suitable for product listings, shopping cart management, checkout, and admin screens.
+React.js will be used to build the frontend interface of StyleCart. It supports reusable components and dynamic updates, which are useful for product listings, search, cart management, checkout, and admin pages.
 
 ## 3.2 Backend — Node.js + Express.js
 
-Node.js with Express.js will be used to develop the server-side application and REST APIs. It will handle authentication, product operations, cart management, order processing, and communication with the database.
+Node.js with Express.js will be used to develop the backend and REST APIs. The backend will handle authentication, product management, cart operations, order processing, and communication with the database.
 
 ## 3.3 Database — MySQL
 
-MySQL will be used as the primary relational database for storing users, categories, products, orders, order items, carts, and cart items. Its relational structure is suitable for maintaining relationships between customers, products, and orders.
+MySQL will be used as the primary relational database. It is suitable for storing structured information such as users, categories, products, carts, orders, and order items while maintaining relationships between these entities.
 
 ## 3.4 Optional Caching — Redis
 
-Redis may be used as an optional caching layer to improve performance for frequently requested data such as product listings or categories. It is not required for the initial MVP and can be introduced if performance optimization is needed.
+Redis can optionally be used to cache frequently accessed information such as product categories or product listings. It is not required for the initial MVP but can be added later if performance improvements are needed.
 
 ## 3.5 Version Control — Git & GitHub
 
-Git will be used for source-code version control, while GitHub will be used to store and submit the project repository. This will also make it easier to track changes throughout the six development sprints.
+Git will be used to track changes in the project source code, while GitHub will be used to store and submit the project repository. Version control will also help maintain the project throughout the six development sprints.
 
 ---
 
 # 4. Entity Relationship Diagram (ERD)
 
-The StyleCart database consists of the following main entities:
+The StyleCart database contains the following main entities:
 
 * Users
 * Categories
@@ -224,61 +229,43 @@ erDiagram
     }
 ```
 
-## 4.2 Relationship Explanation
+## 4.2 ERD Relationship Explanation
 
-### Users → Orders
+### Users → Orders — 1:N
 
-**Relationship:** 1:N
+One user can place many orders, but each order belongs to one user.
 
-One user can place multiple orders, while each order belongs to one user.
+### Users → Cart — 1:1
 
-### Users → Cart
+A user can have zero or one active cart. The `user_id` in the Cart table is unique so that one user does not have multiple active carts.
 
-**Relationship:** 1:1
-
-A user can have zero or one active shopping cart. The `user_id` in the Cart table should be unique to maintain this relationship.
-
-### Categories → Products
-
-**Relationship:** 1:N
+### Categories → Products — 1:N
 
 One category can contain many products, while each product belongs to one category.
 
-### Orders → Order_Items
+### Orders → Order_Items — 1:N
 
-**Relationship:** 1:N
+One order can contain multiple order items. Each order item belongs to one order.
 
-One order contains one or more order items. Each order item belongs to one order.
+### Products → Order_Items — 1:N
 
-### Products → Order_Items
+One product can appear in many order items because the same product can be purchased in different orders.
 
-**Relationship:** 1:N
+### Orders ↔ Products — N:M
 
-One product can appear in multiple order items belonging to different orders.
+An order can contain multiple products, and a product can be included in multiple orders. The `ORDER_ITEMS` table resolves this many-to-many relationship.
 
-### Orders ↔ Products
-
-**Relationship:** N:M
-
-An order can contain multiple products, and a product can appear in multiple orders. This many-to-many relationship is resolved using the `ORDER_ITEMS` table.
-
-### Cart → Cart_Items
-
-**Relationship:** 1:N
+### Cart → Cart_Items — 1:N
 
 One cart can contain multiple cart items, while each cart item belongs to one cart.
 
-### Products → Cart_Items
+### Products → Cart_Items — 1:N
 
-**Relationship:** 1:N
+One product can appear in multiple carts belonging to different customers.
 
-One product can appear in multiple users' carts.
+### Cart ↔ Products — N:M
 
-### Cart ↔ Products
-
-**Relationship:** N:M
-
-A cart can contain multiple products, and a product can exist in multiple carts. This many-to-many relationship is resolved using the `CART_ITEMS` table.
+A cart can contain multiple products, and a product can exist in multiple carts. The `CART_ITEMS` table resolves this many-to-many relationship.
 
 ---
 
@@ -327,38 +314,44 @@ A cart can contain multiple products, and a product can exist in multiple carts.
 
 # 5. Scope Boundaries
 
-## Included in Sprint 1 / MVP
+## 5.1 Included in MVP
+
+The first version of StyleCart will include:
 
 * User registration and login
 * Product catalog
+* Product browsing
 * Product search and filtering
-* Shopping cart
-* Checkout and order placement
+* Shopping cart management
+* Checkout
+* Order placement
 * Order history
 * Basic admin product management
 * Basic inventory management
-* Relational MySQL database design
+* MySQL database
 
-## Excluded from Initial MVP
+## 5.2 Excluded from MVP
 
-* AI product recommendation system
+The following features will not be implemented in the initial version:
+
+* AI product recommendation
 * Live delivery tracking
 * Multi-vendor marketplace
 * Loyalty and reward system
-* Advanced analytics
-* Real payment gateway integration
+* Advanced business analytics
+* Real online payment gateway
 
-These features can be considered for future development if time and project requirements allow.
+These features can be considered as future enhancements after the core system is completed.
 
 ---
 
 # 6. Conclusion
 
-Sprint 1 defines the architecture, target audience, MVP scope, technology stack, and database structure of StyleCart.
+Sprint 1 establishes the foundation of the StyleCart E-Commerce system by defining its target audience, market focus, MVP features, technology stack, and database architecture.
 
-The proposed architecture provides a clear foundation for the remaining development sprints. React.js will provide the frontend interface, Node.js and Express.js will handle backend services, and MySQL will manage the core relational data.
+StyleCart is designed as a general fashion and accessories platform for customers of different age groups. The MVP focuses on essential e-commerce workflows such as product browsing, searching, cart management, checkout, order placement, and order history.
 
-The ERD defines the required relationships between users, products, categories, carts, and orders, making the database structure suitable for an online fashion and accessories store.
+The proposed architecture uses React.js for the frontend, Node.js with Express.js for the backend, and MySQL for structured data storage. The ERD defines the relationships between users, products, categories, carts, and orders and provides a clear database foundation for the upcoming development sprints.
 
 ---
 
