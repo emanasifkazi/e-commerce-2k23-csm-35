@@ -5,9 +5,11 @@ StyleCart is an academic E-Commerce project for an online fashion and accessorie
 ## Project Information
 
 * **Course:** E-Commerce
+* **Roll Number:** 2K23-CSM-35
 * **Current Sprint:** Sprint 1 — Architecture & Scope Definition
 * **Domain:** Fashion & Accessories
 * **Project Type:** Individual Project
+* **Repository:** `e-commerce-2k23-csm-35`
 
 ## Sprint Documentation
 
@@ -25,6 +27,4 @@ The complete Sprint 1 architecture and scope definition is available here:
 
 ## Project Scope
 
-The initial MVP focuses on user authentication, product browsing and search, shopping cart management, checkout, order processing, order history, and basic admin product/inventory management.
-# ecommerce-35
-StyleCart — Online Fashion &amp; Accessories Store
+The initial MVP focuses on user authentication, product browsing and search, shopping cart management, checkout, order processing, order history, and basic admin product and inventory management.
