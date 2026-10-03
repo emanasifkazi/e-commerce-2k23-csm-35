@@ -4,7 +4,7 @@
 **Department:** Computer Science / Artificial Intelligence
 **Project Type:** Individual E-Commerce Project
 **Domain:** Fashion & Accessories
-**Sprint:** 2 — Catalog Data Foundation
+**Sprint:** 2 - Catalog Data Foundation
 
 ---
 
@@ -40,9 +40,9 @@ Clothing
 ### Categories
 
 | ID | Category       | Parent Category |
-| -- | -------------- | --------------- |
-| 1  | Clothing       | None            |
-| 2  | Men's Clothing | Clothing        |
+| -: | -------------- | --------------- |
+|  1 | Clothing       | None            |
+|  2 | Men's Clothing | Clothing        |
 
 The category structure demonstrates a two-level category hierarchy.
 
@@ -53,10 +53,10 @@ The category structure demonstrates a two-level category hierarchy.
 The StyleCart catalog contains three products.
 
 | ID | Product         | Category | Status |
-| -- | --------------- | -------- | ------ |
-| 1  | Classic T-Shirt | Clothing | Active |
-| 2  | Denim Jeans     | Clothing | Active |
-| 3  | Casual Shirt    | Clothing | Active |
+| -: | --------------- | -------- | ------ |
+|  1 | Classic T-Shirt | Clothing | Active |
+|  2 | Denim Jeans     | Clothing | Active |
+|  3 | Casual Shirt    | Clothing | Active |
 
 The Denim Jeans product is used to demonstrate multiple product variants and SKUs.
 
@@ -66,12 +66,12 @@ The Denim Jeans product is used to demonstrate multiple product variants and SKU
 
 The Denim Jeans product contains multiple combinations of color and size.
 
-| Variant ID | Color | Size | Combination Key |
-| ---------- | ----- | ---- | --------------- |
-| 2          | Blue  | 32   | Blue-32         |
-| 3          | Blue  | 34   | Blue-34         |
-| 4          | Black | 32   | Black-32        |
-| 5          | Black | 34   | Black-34        |
+| Variant ID | Product     | Color | Size | Combination Key |
+| ---------: | ----------- | ----- | ---- | --------------- |
+|          2 | Denim Jeans | Blue  | 32   | Blue-32         |
+|          3 | Denim Jeans | Blue  | 34   | Blue-34         |
+|          4 | Denim Jeans | Black | 32   | Black-32        |
+|          5 | Denim Jeans | Black | 34   | Black-34        |
 
 These variants allow the same product to have different selectable combinations.
 
@@ -79,16 +79,16 @@ These variants allow the same product to have different selectable combinations.
 
 ## 5. SKU Data
 
-Four valid SKUs were created for the Denim Jeans product.
+Four SKUs were created for the Denim Jeans product.
 
 | SKU ID | SKU Code       | Price | Stock Quantity | Status      |
-| ------ | -------------- | ----: | -------------: | ----------- |
-| 2      | DENIM-BLUE-32  |  2999 |             20 | Available   |
-| 3      | DENIM-BLUE-34  |  2999 |             15 | Available   |
-| 4      | DENIM-BLACK-32 |  2999 |             12 | Available   |
-| 5      | DENIM-BLACK-34 |  2999 |              0 | Unavailable |
+| -----: | -------------- | ----: | -------------: | ----------- |
+|      2 | DENIM-BLUE-32  |  2999 |             20 | Available   |
+|      3 | DENIM-BLUE-34  |  2999 |             15 | Available   |
+|      4 | DENIM-BLACK-32 |  2999 |             12 | Available   |
+|      5 | DENIM-BLACK-34 |  2999 |              0 | Unavailable |
 
-The `DENIM-BLACK-34` SKU intentionally demonstrates an unavailable product combination because its stock quantity is zero and the SKU is inactive.
+The `DENIM-BLACK-34` SKU demonstrates an unavailable product combination because its stock quantity is zero.
 
 ---
 
@@ -141,11 +141,14 @@ The basic authentication flow is:
 
 ```text
 Admin Login
-     ↓
+    |
+    v
 JWT Token
-     ↓
+    |
+    v
 Bearer Authorization
-     ↓
+    |
+    v
 Admin Catalog API
 ```
 
@@ -198,28 +201,154 @@ The catalog follows a relational structure.
 
 ```text
 CATEGORIES
-     │
-     └──────< PRODUCTS
-                  │
-                  └──────< VARIANTS
-                              │
-                              └──────< SKUs
+     |
+     +------< CATEGORIES
+     |        (Parent-Child)
+     |
+     +------< PRODUCTS
+                |
+                +------< PRODUCT_VARIANTS
+                             |
+                             +------< SKUs
 ```
 
 The main relationships are:
 
 * A category can contain multiple products.
+* A category can have child categories.
 * A product belongs to a category.
 * A product can contain multiple variants.
 * A variant belongs to a product.
-* SKUs are associated with product variants.
-* Each SKU stores price, stock quantity and availability information.
+* A variant can have multiple SKUs.
+* Each SKU stores price, stock quantity and status.
+* Orders are associated with users.
+* Order items are associated with products.
+* Cart items are associated with products.
 
 ---
 
-## 10. Catalog Data Demonstration
+## 10. Sprint 2 Catalog ERD
 
-The implemented catalog demonstrates the required data foundation:
+The following ERD represents the main StyleCart database entities and their relationships.
+
+```mermaid
+erDiagram
+
+    USERS ||--o{ ORDERS : places
+    USERS ||--o| CART : owns
+
+    CATEGORIES ||--o{ CATEGORIES : parent_of
+    CATEGORIES ||--o{ PRODUCTS : contains
+
+    PRODUCTS ||--o{ PRODUCT_VARIANTS : has
+    PRODUCT_VARIANTS ||--o{ SKUS : contains
+
+    ORDERS ||--|{ ORDER_ITEMS : contains
+    PRODUCTS ||--o{ ORDER_ITEMS : referenced_by
+
+    CART ||--o{ CART_ITEMS : contains
+    PRODUCTS ||--o{ CART_ITEMS : added_to
+
+    USERS {
+        int id PK
+        string name
+        string email UK
+        string password_hash
+        string role
+        datetime created_at
+    }
+
+    CATEGORIES {
+        int id PK
+        string name
+        string slug UK
+        string description
+        int parent_id FK
+        datetime created_at
+    }
+
+    PRODUCTS {
+        int id PK
+        int category_id FK
+        string name
+        string slug UK
+        string description
+        decimal price
+        string status
+        int stock_quantity
+        string image_url
+        datetime created_at
+    }
+
+    PRODUCT_VARIANTS {
+        int id PK
+        int product_id FK
+        string color
+        string size
+        string combination_key
+        datetime created_at
+    }
+
+    SKUS {
+        int id PK
+        int variant_id FK
+        string sku_code UK
+        decimal price
+        int stock_quantity
+        string status
+        datetime created_at
+    }
+
+    ORDERS {
+        int id PK
+        int user_id FK
+        decimal total_amount
+        string status
+        datetime order_date
+    }
+
+    ORDER_ITEMS {
+        int id PK
+        int order_id FK
+        int product_id FK
+        int quantity
+        decimal unit_price
+    }
+
+    CART {
+        int id PK
+        int user_id FK
+        datetime created_at
+        datetime updated_at
+    }
+
+    CART_ITEMS {
+        int id PK
+        int cart_id FK
+        int product_id FK
+        int quantity
+    }
+```
+
+### ERD Explanation
+
+* `USERS` stores customer and administrator accounts.
+* `CATEGORIES` stores product categories and supports parent-child hierarchy through `parent_id`.
+* `PRODUCTS` stores the main catalog products.
+* `PRODUCT_VARIANTS` stores selectable product combinations such as color and size.
+* `SKUS` stores unique stock keeping units with their price, stock quantity and status.
+* `ORDERS` stores customer orders.
+* `ORDER_ITEMS` stores the products included in each order.
+* `CART` stores a user's shopping cart.
+* `CART_ITEMS` stores products added to the cart.
+
+The ERD provides the database foundation for the StyleCart catalog and future shopping functionality.
+
+---
+
+## 11. Catalog Data Demonstration
+
+The implemented catalog demonstrates the required data foundation.
 
 ### Categories
 
@@ -248,15 +377,15 @@ Black-34
 ### Denim Jeans SKUs
 
 ```text
-DENIM-BLUE-32   → Stock: 20
-DENIM-BLUE-34   → Stock: 15
-DENIM-BLACK-32  → Stock: 12
-DENIM-BLACK-34  → Stock: 0 (Unavailable)
+DENIM-BLUE-32  -> Stock: 20
+DENIM-BLUE-34  -> Stock: 15
+DENIM-BLACK-32 -> Stock: 12
+DENIM-BLACK-34 -> Stock: 0 (Unavailable)
 ```
 
 ---
 
-## 11. Automated Testing
+## 12. Automated Testing
 
 Automated API tests were implemented using Jest.
 
@@ -270,17 +399,17 @@ The test suite verifies catalog retrieval, validation and authorization scenario
 
 ### Test Cases
 
-| # | Test Case                                 | Result |
-| - | ----------------------------------------- | ------ |
-| 1 | Admin can retrieve categories             | PASS   |
-| 2 | Admin can retrieve products               | PASS   |
-| 3 | Admin can retrieve Denim Jeans SKUs       | PASS   |
-| 4 | Duplicate category slug is rejected       | PASS   |
-| 5 | Invalid parent category is rejected       | PASS   |
-| 6 | Duplicate SKU code is rejected            | PASS   |
-| 7 | Negative stock is rejected                | PASS   |
-| 8 | Negative price is rejected                | PASS   |
-| 9 | Unauthenticated admin request is rejected | PASS   |
+|  # | Test Case                                 | Result |
+| -: | ----------------------------------------- | ------ |
+|  1 | Admin can retrieve categories             | PASS   |
+|  2 | Admin can retrieve products               | PASS   |
+|  3 | Admin can retrieve Denim Jeans SKUs       | PASS   |
+|  4 | Duplicate category slug is rejected       | PASS   |
+|  5 | Invalid parent category is rejected       | PASS   |
+|  6 | Duplicate SKU code is rejected            | PASS   |
+|  7 | Negative stock is rejected                | PASS   |
+|  8 | Negative price is rejected                | PASS   |
+|  9 | Unauthenticated admin request is rejected | PASS   |
 
 ### Test Command
 
@@ -301,7 +430,7 @@ All 9 implemented automated tests passed successfully.
 
 ---
 
-## 12. Validation Test Examples
+## 13. Validation Test Examples
 
 ### Duplicate Category Slug
 
@@ -359,25 +488,32 @@ Expected Status: 401 Unauthorized
 
 ---
 
-## 13. Sprint 2 Admin Workflow
+## 14. Sprint 2 Admin Workflow
 
 The catalog management workflow is:
 
 ```text
 Admin Login
-    ↓
+    |
+    v
 Create Category
-    ↓
+    |
+    v
 Create Child Category
-    ↓
+    |
+    v
 Create Product
-    ↓
+    |
+    v
 Create Product Variants
-    ↓
+    |
+    v
 Create SKUs
-    ↓
+    |
+    v
 Update Product or SKU
-    ↓
+    |
+    v
 Retrieve Catalog Records
 ```
 
@@ -385,7 +521,7 @@ This workflow provides the foundation for future customer-facing catalog and sho
 
 ---
 
-## 14. Sprint 2 Deliverables
+## 15. Sprint 2 Deliverables
 
 The following Sprint 2 components have been implemented:
 
@@ -404,17 +540,22 @@ The following Sprint 2 components have been implemented:
 * [x] Seed/demo catalog data
 * [x] Four valid SKUs
 * [x] One unavailable SKU combination
+* [x] Sprint 2 Catalog ERD
 * [x] Jest automated tests
 * [x] 9/9 automated tests passing
 
 ---
 
-## 15. Conclusion
+## 16. Conclusion
 
 Sprint 2 establishes the catalog data foundation for StyleCart.
 
-The system now supports authenticated administration of categories, products, product variants and SKUs. The catalog contains a two-level category hierarchy, three products, multiple product variants, four valid SKUs and one intentionally unavailable SKU.
+The system supports authenticated administration of categories, products, product variants and SKUs. The catalog contains a two-level category hierarchy, three products, multiple product variants, four SKUs and one intentionally unavailable SKU.
 
-Validation rules are also implemented to reject duplicate category slugs, duplicate SKU codes, invalid parent categories, negative stock and negative prices.
+Validation rules are implemented to reject duplicate category slugs, duplicate SKU codes, invalid parent categories, negative stock and negative prices.
 
-The automated Jest test suite currently contains 9 tests, and all 9 tests passed successfully.
+The Sprint 2 database ERD documents the relationships between users, categories, products, variants, SKUs, orders and carts.
+
+The automated Jest test suite contains 9 tests, and all 9 tests passed successfully.
+
+Sprint 2 therefore provides the required catalog foundation for the upcoming StyleCart development sprints.
